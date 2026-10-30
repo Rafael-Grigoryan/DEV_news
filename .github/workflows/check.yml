@@ -1,0 +1,94 @@
+name: Check changelogs
+
+on:
+  schedule:
+    # Каждый час в :17 — не в ровный час, когда у GitHub пик запланированных запусков.
+    - cron: "17 * * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Dry run: только напечатать посты в лог, ничего не отправлять и не менять state.json"
+        type: boolean
+        default: true
+      preview_latest:
+        description: "Только для dry run: показать N последних записей каждого источника как посты (0 — выкл.)"
+        type: number
+        default: 0
+      only:
+        description: "Проверить только эти источники: id через запятую (пусто — все)"
+        type: string
+        default: ""
+
+permissions:
+  contents: write # коммит state.json
+  actions: write # keepalive: повторное включение workflow
+
+concurrency:
+  # Два запуска одновременно могли бы опубликовать одну запись дважды.
+  group: changelog-bot
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Check sources and publish
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          GEMINI_MODEL: ${{ vars.GEMINI_MODEL }}
+          GITHUB_TOKEN: ${{ github.token }}
+          PYTHONUNBUFFERED: "1"
+          # Входы передаются через env, а не подставляются в скрипт (защита от инъекций).
+          DRY_RUN: ${{ inputs.dry_run && 'true' || 'false' }}
+          PREVIEW_LATEST: ${{ inputs.preview_latest || 0 }}
+          ONLY: ${{ inputs.only }}
+        run: |
+          args=()
+          if [ "$DRY_RUN" = "true" ]; then
+            args+=(--dry-run)
+            if [ "$PREVIEW_LATEST" -gt 0 ]; then args+=(--preview-latest "$PREVIEW_LATEST"); fi
+          fi
+          if [ -n "$ONLY" ]; then args+=(--only "$ONLY"); fi
+          python -m bot "${args[@]}"
+
+      - name: Commit state.json
+        # always(): даже если прогон упал на середине, уже опубликованные записи надо сохранить.
+        if: always() && !inputs.dry_run
+        run: |
+          if git diff --quiet -- state.json; then
+            echo "state.json не изменился"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add state.json
+          git commit -m "chore(state): update published entries"
+          for attempt in 1 2 3; do
+            git push && exit 0
+            echo "push не прошёл, подтягиваю изменения (попытка $attempt)"
+            git pull --rebase
+          done
+          exit 1
+
+      - name: Keepalive
+        # GitHub отключает schedule в репозитории без активности 60 дней.
+        # Повторное включение workflow через API сбрасывает этот счётчик без фиктивных коммитов.
+        if: always() && github.event_name == 'schedule'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api -X PUT "repos/${{ github.repository }}/actions/workflows/check.yml/enable"

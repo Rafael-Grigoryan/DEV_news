@@ -1,0 +1,10 @@
+[project]
+name = "changelog-telegram-bot"
+version = "1.0.0"
+description = "Публикует выжимки официальных changelog'ов в Telegram-канал по расписанию GitHub Actions"
+requires-python = ">=3.12"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-q"

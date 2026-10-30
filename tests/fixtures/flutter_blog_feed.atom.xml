@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title type="text">The Flutter Blog</title>
+  <subtitle type="text">Build beautiful native apps in record time</subtitle>
+  <id>https://flutter.dev/blog/feed.xml</id>
+  <link rel="self" type="application/atom+xml" href="https://flutter.dev/blog/feed.xml"/>
+  <link rel="alternate" type="text/html" href="https://flutter.dev/blog"/>
+  <updated>2026-10-20T00:00:00.000Z</updated>
+  <author>
+    <name>Flutter Team</name>
+  </author>
+  <entry>
+    <title type="text">AI makes it easy to migrate. Flutter makes it easy to scale.</title>
+    <link rel="alternate" type="text/html" href="https://flutter.dev/blog/ai-makes-it-easy-to-migrate-flutter-makes-it-easy-to-scale"/>
+    <id>https://flutter.dev/blog/ai-makes-it-easy-to-migrate-flutter-makes-it-easy-to-scale</id>
+    <updated>2026-10-20T00:00:00.000Z</updated>
+    <published>2026-10-20T00:00:00.000Z</published>
+    <author>
+      <name>Carlos Mendonça</name>
+    </author>
+    <author>
+      <name>Emma Twersky</name>
+    </author>
+    <summary type="text">Why verification speed, not code generation, is the real bottleneck of agentic development, and how a single source of truth powers multi-platform scale.</summary>
+    <category term="news"/>
+  </entry>
+  <entry>
+    <title type="text">Announcing Genkit Dart 1.0: Build production-ready agentic apps with Dart and Flutter</title>
+    <link rel="alternate" type="text/html" href="https://flutter.dev/blog/announcing-genkit-dart-1-0"/>
+    <id>https://flutter.dev/blog/announcing-genkit-dart-1-0</id>
+    <updated>2026-10-08T00:00:00.000Z</updated>
+    <published>2026-10-08T00:00:00.000Z</published>
+    <author>
+      <name>Chris Gill</name>
+    </author>
+    <summary type="text">Announcing the stable 1.0 release of Genkit Dart, an open-source framework for building AI-powered features and agentic workflows with Dart and Flutter.</summary>
+    <category term="news"/>
+  </entry>
+  <entry>
+    <title type="text">How I converted GenLatte to fullstack Dart</title>
+    <link rel="alternate" type="text/html" href="https://flutter.dev/blog/converted-genlatte-fullstack-dart"/>
+    <id>https://flutter.dev/blog/converted-genlatte-fullstack-dart</id>
+    <updated>2026-09-22T00:00:00.000Z</updated>
+    <published>2026-09-22T00:00:00.000Z</published>
+    <author>
+      <name>Craig Labenz</name>
+    </author>
+    <summary type="text">And reduced the app's server bill</summary>
+    <category term="deep-dive"/>
+  </entry>
+  <entry>
+    <title type="text">Material and Cupertino decoupling are here</title>
+    <link rel="alternate" type="text/html" href="https://flutter.dev/blog/decoupling-material-cupertino"/>
+    <id>https://flutter.dev/blog/decoupling-material-cupertino</id>
+    <updated>2026-09-09T00:00:00.000Z</updated>
+    <published>2026-09-09T00:00:00.000Z</published>
+    <author>
+      <name>Craig Labenz</name>
+    </author>
+    <summary type="text">Why moving Material and Cupertino out of core Flutter accelerates fixes and development of new features</summary>
+    <category term="news"/>
+  </entry>
+  <entry>
+    <title type="text">Quick, reliable calculations with A2UI's Client-Side Functions</title>
+    <link rel="alternate" type="text/html" href="https://flutter.dev/blog/a2ui-client-side-functions"/>
+    <id>https://flutter.dev/blog/a2ui-client-side-functions</id>
+    <updated>2026-08-28T00:00:00.000Z</updated>
+    <published>2026-08-28T00:00:00.000Z</published>
+    <author>
+      <name>Andrew Brogdon</name>
+    </author>
+    <summary type="text">Learn how client-side functions allow an agent to delegate local operations directly to Dart code running on a user's device.</summary>
+    <category term="deep-dive"/>
+  </entry>
+</feed>

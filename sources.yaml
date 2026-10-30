@@ -1,0 +1,81 @@
+# Источники changelog'ов. Как добавить новый — см. README, раздел «Как добавить новый источник».
+#
+# Общие поля источника:
+#   id                     уникальный ключ (a-z, 0-9, _), под ним хранится state
+#   name                   как показывать в заголовке поста
+#   emoji, hashtag         оформление поста
+#   type                   тип парсера: markdown_changelog | html_release_notes |
+#                          flutter_releases | github_releases | rss
+#   url                    откуда брать данные
+#   enabled                false — источник пропускается
+#   include_prereleases    публиковать ли пре-релизы (beta, -dev, .pre)
+#   publish_latest_on_init при первом запуске опубликовать самую свежую запись
+#                          (по умолчанию первый запуск только запоминает текущие записи)
+#   max_entries, max_posts_per_run, link_text — переопределяют значения из settings
+# Остальные поля — параметры конкретного парсера (описаны в начале его файла в bot/parsers/).
+
+settings:
+  max_entries: 30            # сколько последних записей источника рассматривать (< state_keep)
+  max_posts_per_run: 5       # максимум постов от одного источника за запуск, остальные — позже
+  state_keep: 200            # сколько опубликованных ID хранить на источник в state.json
+  post_delay_seconds: 3      # пауза между постами в Telegram
+  disable_web_page_preview: true
+  fallback_max_chars: 1500   # сколько оригинального текста класть в пост, если Gemini недоступен
+  link_text: "Полный changelog"
+
+sources:
+  - id: claude_code
+    name: Claude Code
+    emoji: "⌨️"
+    hashtag: "#ClaudeCode"
+    type: markdown_changelog
+    url: https://raw.githubusercontent.com/anthropics/claude-code/main/CHANGELOG.md
+    link_template: https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md#{anchor}
+    heading_level: 2
+    enabled: true
+
+  - id: claude_api
+    name: Claude API
+    emoji: "🔌"
+    hashtag: "#ClaudeAPI"
+    type: markdown_changelog
+    # Официальная markdown-версия страницы https://platform.claude.com/docs/en/release-notes/overview
+    url: https://platform.claude.com/docs/en/release-notes/overview.md
+    link_template: https://platform.claude.com/docs/en/release-notes/overview#{anchor}
+    heading_level: 3
+    id_kind: date
+    enabled: true
+
+  - id: claude_apps
+    name: Claude Apps
+    emoji: "📱"
+    hashtag: "#ClaudeApps"
+    type: html_release_notes
+    url: https://support.claude.com/en/articles/12138966-release-notes
+    container_selector: article
+    entry_heading: h3
+    enabled: true
+
+  - id: flutter
+    name: Flutter
+    emoji: "💙"
+    hashtag: "#Flutter"
+    type: flutter_releases
+    url: https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json
+    changelog_url: https://raw.githubusercontent.com/flutter/flutter/master/CHANGELOG.md
+    include_prereleases: false   # true — ещё и релизы канала beta
+    enrich_from_blog: true       # для x.y.0 подтягивать пост из официального блога flutter.dev
+    enabled: true
+
+  - id: dart
+    name: Dart
+    emoji: "🎯"
+    hashtag: "#Dart"
+    type: markdown_changelog
+    # Ветка stable: в main нет патч-релизов (3.13.4+), зато есть незарелизенные секции.
+    url: https://raw.githubusercontent.com/dart-lang/sdk/stable/CHANGELOG.md
+    link_template: https://github.com/dart-lang/sdk/blob/stable/CHANGELOG.md#{anchor}
+    heading_level: 2
+    skip_unreleased: true
+    include_prereleases: false
+    enabled: true
